@@ -3,28 +3,30 @@
 # This version 2.0 can pack any amount of sections
 # dtat01, 2022
 
+"""
+Rewrire it with classes!
+"""
+
 import os
 from tkinter import *
-from tkinter import filedialog
+# from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
 from ttkthemes import ThemedTk
-import \
-    tkfilebrowser  # -w --add-data 'C:\pythonProject\venv\Lib\site-packages\tkfilebrowser\images;tkfilebrowser\images' - без цього компільована версія не працює
+import tkfilebrowser
 import shutil
+
 
 # TODO тести нової версії
 
 # Функція для вибору директорії
 def choose_dir():
-    global  sec_dirs
-    #sec_dirs = []
     section_list_success.delete('0.0', END)
     section_list_fail.delete('0.0', END)
-    sec_dirs = list(tkfilebrowser.askopendirnames())
+    dirs = list(tkfilebrowser.askopendirnames())
     print_s_list = []
     print_f_list = []
-    for directory in sec_dirs:
+    for directory in dirs:
         print(directory)
         dir_path = directory
         check_pi_path = os.path.join(dir_path, 'pi')
@@ -43,22 +45,20 @@ def choose_dir():
             print_s_list.append(os.path.basename(directory))
     section_list_success.insert('0.0', ';'.join(print_s_list))
     section_list_fail.insert('0.0', ';'.join(print_f_list))
-    return sec_dirs
+    return dirs
 
 
-def start():
-    if sec_dirs == []:
+def start(dirs):
+    if not dirs:
         messagebox.showwarning('Увага', 'Ви не обрали секції.')
     else:
         result_packed.delete('0.0', END)
         result_drw.delete('0.0', END)
         for section in success_list:
-            pack_pi(section)
+            pack_pi(section)  # Що це?
         messagebox.showinfo('Шикарно!', 'Процес завершено, дивіться результати.')
 
-
-# Створеняя директорій та піддерикторій продакшену у темпах.
-def pack_pi(section):
+    # Створеняя директорій та піддерикторій продакшену у темпах.
     prj_no = prj_entry.get()  # читає ввод користувача в проект номер
     package_main_name = entry_option_1.get()
     temp_path = os.path.join('C:/temp/', f'{prj_no}_BATCH_PACK')
@@ -66,12 +66,12 @@ def pack_pi(section):
         os.mkdir(temp_path)
     # Створення папок у темп
     sec_name = os.path.basename(section)  # знаходимо номер секції
-    prod_name = f'{prj_no}_{sec_name}_PROD_INFO'  # ім'я директорії пакету продакшену
+    prod_name = f'{prj_no}_{sec_name}_PROD_INFO'  # ім'я директорії пакета продакшену
     dwg_name = f'{prj_no}_{sec_name}_DRAWINGS'  # ім'я директорії креслень
     prod_dir = os.path.join(temp_path, prod_name)  # будуємо шлях для папки продакшену
     dwg_dir = os.path.join(temp_path, dwg_name)
     # шляхи до директорій всередені пакету:
-    if package_main_name=='':
+    if package_main_name == '':
         package_main_name = 'Complete_package'
     else:
         pass
@@ -82,9 +82,13 @@ def pack_pi(section):
     reports_d = os.path.join(complete_p, 'Reports')
     try:
         os.mkdir(prod_dir)
-    except windowsError:
-        messagebox.showerror('Помилка.',
-                             f'Знайдені застарілі пакети PI.\nБудь ласка, видаліть старі результати пакування:\n{temp_path}')
+    except WindowsError:
+        messagebox.showerror(
+            'Помилка.',
+            f'Знайдені застарілі пакети PI.\n'
+            f'Будь ласка, видаліть старі результати пакування: '
+            f'\n{temp_path}'
+        )
     os.makedirs(complete_p)
     os.makedirs(plates_d)
     os.makedirs(profiles_d)
@@ -133,11 +137,7 @@ def pack_pi(section):
             elif file.startswith('rep-bom'):
                 os.rename(path, bom_report)
             else:
-                try:
-                    #видаляємо інші репорти
-                    os.remove(path)
-                except:
-                    continue
+                os.remove(path)
     # видаляємо пусті директорії
     check_empty_dir = [
         plates_d,
@@ -149,7 +149,7 @@ def pack_pi(section):
         path = i
         if not os.listdir(path):
             os.rmdir(i)
-    result_packed.insert(END, f'{sec_name};')
+    result_packed.insert(END, f'{sec_name}; ')
     # креслення
     cur_path = section
     temp_path_one = os.path.split(cur_path)[0]
@@ -165,7 +165,7 @@ def pack_pi(section):
     if not os.listdir(dwg_dir):
         os.rmdir(dwg_dir)
     else:
-        result_drw.insert(END, f'{sec_name};')
+        result_drw.insert(END, f'{sec_name}; ')
 
 
 # Інтерфейс програми
@@ -191,12 +191,12 @@ frame_start.pack(pady=8, padx=10, fill=X)
 frame_result_text = ttk.Frame(root)
 frame_result_text.pack(pady=5, padx=10, fill=X)
 
-results_label=ttk.Label(text='Результати пакування:', anchor=CENTER)
+results_label = ttk.Label(text='Результати пакування:', anchor=CENTER)
 frame_result = ttk.LabelFrame(root, labelwidget=results_label, height=50, width=35, borderwidth=2, relief=RIDGE)
 frame_result.pack(pady=5, padx=10, fill=X)
 
-options_label=ttk.Label(text='Налаштування (колись їх буде більше, обіцяю):')
-frame_options=ttk.LabelFrame(root, labelwidget=options_label, height=50, width=35, borderwidth=2, relief=RIDGE)
+options_label = ttk.Label(text='Налаштування (колись їх буде більше, обіцяю):')
+frame_options = ttk.LabelFrame(root, labelwidget=options_label, height=50, width=35, borderwidth=2, relief=RIDGE)
 frame_options.pack(pady=5, padx=10, fill=X)
 
 # кнопка вибору директорій
@@ -244,11 +244,11 @@ result_drw_label.grid(row=1, column=0)
 result_drw = Text(frame_result, height=2, width=35, padx=2, pady=0, relief=SOLID, borderwidth=1)
 result_drw.grid(row=1, column=1)
 
-label_option_1=ttk.Label(frame_options, text='Ім\'я папки продакшену')
+label_option_1 = ttk.Label(frame_options, text='Ім\'я папки продакшену')
 label_option_1.pack(side=LEFT, padx=5)
 
-entry_option_1=Entry(frame_options, relief=SOLID, borderwidth=1)
-entry_option_1.insert(0,'Complete_package')
+entry_option_1 = Entry(frame_options, relief=SOLID, borderwidth=1)
+entry_option_1.insert(0, 'Complete_package')
 entry_option_1.pack(side=LEFT, expand=True, fill=X, ipady=3)
 
 # задання фейл та успішних списків
