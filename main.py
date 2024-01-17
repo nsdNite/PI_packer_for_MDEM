@@ -13,7 +13,6 @@ from tkinter import ttk
 from ttkthemes import ThemedTk
 
 
-# Функція для вибору директорії
 def choose_dir():
     section_list_success.delete("0.0", END)
     section_list_fail.delete("0.0", END)
@@ -49,24 +48,26 @@ def start(dirs):
         result_packed.delete("0.0", END)
         result_drw.delete("0.0", END)
         for section in success_list:
-            pack_pi(section)  # Що це?
+            pack_pi(section)
         messagebox.showinfo("Шикарно!", "Процес завершено, дивіться результати.")
 
-    # Створеняя директорій та піддерикторій продакшену у темпах.
-    prj_no = prj_entry.get()  # читає ввод користувача в проект номер
+
+# Створення директорій та під-дерикторій продакшену у темпах.
+def pack_pi(section) -> None:
+    prj_no = prj_entry.get()
     package_main_name = entry_option_1.get()
     temp_path = os.path.join("C:/temp/", f"{prj_no}_BATCH_PACK")
     if not os.path.exists(
             temp_path
-    ):  # якщо такого шляху нема, то створюється директорія проекту
+    ):  # якщо такого шляху нема, то створюється директорія проєкту
         os.mkdir(temp_path)
-    # Створення папок у темп
+    # Створення директорій у темп
     sec_name = os.path.basename(section)  # знаходимо номер секції
     prod_name = f"{prj_no}_{sec_name}_PROD_INFO"  # ім'я директорії пакета продакшену
     dwg_name = f"{prj_no}_{sec_name}_DRAWINGS"  # ім'я директорії креслень
-    prod_dir = os.path.join(temp_path, prod_name)  # будуємо шлях для папки продакшену
+    prod_dir = os.path.join(temp_path, prod_name)  # будуємо шлях для директорії продакшену
     dwg_dir = os.path.join(temp_path, dwg_name)
-    # шляхи до директорій всередені пакету:
+    # шляхи до директорій всередині пакету:
     if package_main_name == "":
         package_main_name = "Complete_package"
     else:
@@ -90,13 +91,14 @@ def start(dirs):
     os.makedirs(profiles_d)
     os.mkdir(formed_d)
     os.makedirs(reports_d)
+
     cur_path = section
     prof_path = os.path.join(cur_path, "cam")
     plat_path = os.path.join(cur_path, "pi")
-    print(plat_path, prof_path)
+
     for folder, subfolders, files in os.walk(plat_path):
         for file in files:
-            path = os.path.join(folder, file)  # повний шлях до файлу
+            path = os.path.join(folder, file)
             if file.startswith("FP"):
                 shutil.copy2(path, os.path.join(formed_d, file))
             elif file.endswith(".dxf"):
@@ -114,7 +116,7 @@ def start(dirs):
             path = os.path.join(folder, file)
             if file.endswith(".pdf") or file.endswith(".dwg"):
                 shutil.copy2(path, os.path.join(profiles_d, file))
-    # репорти
+
     cog_report = os.path.join(reports_d, f"{prj_no}_{sec_name}_centre_of_gravity.csv")
     nestprof = os.path.join(reports_d, f"{prj_no}_{sec_name}_profile_nesting_list.txt")
     nestbar = os.path.join(reports_d, f"{prj_no}_{sec_name}_profile_bar_list.txt")
@@ -168,14 +170,13 @@ def start(dirs):
         result_drw.insert(END, f"{sec_name}; ")
 
 
-# Інтерфейс програми
 root = ThemedTk()
 root.geometry("500x450+500+300")
 root.resizable(False, False)
 root.title("Universal Production Packager v.2.0")
 style = ttk.Style(root)
 style.theme_use("clam")
-# фрейми
+
 frame_folder = ttk.Frame(root)
 frame_folder.pack(pady=5, padx=10, fill=X)
 
@@ -197,19 +198,17 @@ frame_result = ttk.LabelFrame(
 )
 frame_result.pack(pady=5, padx=10, fill=X)
 
-options_label = ttk.Label(text="Налаштування (колись їх буде більше, обіцяю):")
+options_label = ttk.Label(text="Налаштування (колись їх буде більше):")
 frame_options = ttk.LabelFrame(
     root, labelwidget=options_label, height=50, width=35, borderwidth=2, relief=RIDGE
 )
 frame_options.pack(pady=5, padx=10, fill=X)
 
-# кнопка вибору директорій
 btn_dialog = ttk.Button(
     frame_folder, text="Вибрати директорії секцій", command=choose_dir
 )
 btn_dialog.pack(padx=0, fill=X)
 
-# списки секцій з та без рі
 section_list_s = ttk.Label(
     frame_section_list,
     text="Для наступних секцій буде спаковано PI та креслення (при наявності):",
@@ -248,7 +247,7 @@ prj_label.pack(side=LEFT, padx=5)
 
 prj_entry = Entry(frame_project, relief=SOLID, borderwidth=1)
 prj_entry.pack(side=LEFT, expand=True, fill=X, ipady=3)
-# кнопка старту
+
 btn_start = ttk.Button(frame_start, text="Почати", command=start)
 btn_start.pack(fill=X)
 
@@ -277,7 +276,6 @@ entry_option_1 = Entry(frame_options, relief=SOLID, borderwidth=1)
 entry_option_1.insert(0, "Complete_package")
 entry_option_1.pack(side=LEFT, expand=True, fill=X, ipady=3)
 
-# задання фейл та успішних списків
 fail_list = []
 success_list = []
 sec_dirs = []
