@@ -1,24 +1,16 @@
 # Python 3
-# Production info packer for MDEM to be free from nupas macro
+# Production info packer for MDEM to be free from NUPAS macro
 # This version 2.0 can pack any amount of sections
 # dtat01, 2022
 
-"""
-Rewrite it with classes!
-"""
-
 import os
-from tkinter import *
+import shutil
 
-# from tkinter import filedialog
+import tkfilebrowser
+from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 from ttkthemes import ThemedTk
-import tkfilebrowser
-import shutil
-
-
-# TODO тести нової версії
 
 
 # Функція для вибору директорії
@@ -65,7 +57,7 @@ def start(dirs):
     package_main_name = entry_option_1.get()
     temp_path = os.path.join("C:/temp/", f"{prj_no}_BATCH_PACK")
     if not os.path.exists(
-        temp_path
+            temp_path
     ):  # якщо такого шляху нема, то створюється директорія проекту
         os.mkdir(temp_path)
     # Створення папок у темп
@@ -110,9 +102,9 @@ def start(dirs):
             elif file.endswith(".dxf"):
                 shutil.copy2(path, os.path.join(plates_d, file))
             elif (
-                file.endswith(".list")
-                or file.endswith(".csv")
-                or file.endswith(".xlsx")
+                    file.endswith(".list")
+                    or file.endswith(".csv")
+                    or file.endswith(".xlsx")
             ):
                 shutil.copy2(path, os.path.join(reports_d, file))
             else:
@@ -259,9 +251,6 @@ prj_entry.pack(side=LEFT, expand=True, fill=X, ipady=3)
 # кнопка старту
 btn_start = ttk.Button(frame_start, text="Почати", command=start)
 btn_start.pack(fill=X)
-# блок результатів
-# result_label = ttk.Label(frame_result_text, text='Результати пакування:')
-# result_label.pack(padx=5, fill=X)
 
 result_packed_label = ttk.Label(frame_result, text="PI спаковано для секцій:")
 result_packed_label.configure(anchor=W, width=30)
